@@ -1,0 +1,34 @@
+{
+    "name": "sqlr/throttling",
+    "description": "PHP library with throttling algorithms.",
+    "type": "library",
+    "keywords": [
+        "throttle",
+        "throttling",
+        "leaky",
+        "bucket"
+    ],
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Willem Mouwen",
+            "email": "willem@willemmouwen.nl"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sqlr\\Throttling\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sqlr\\Throttling\\Tests\\": "tests/"
+        }
+    }
+}

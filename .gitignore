@@ -1,0 +1,6 @@
+# Prevent dependencies from reaching the repository
+/composer.lock
+/vendor
+
+# Ignore JetBrains IDE
+/.idea
