@@ -19,17 +19,33 @@ class Once implements StorageInterface
     /**
      * @inheritdoc
      */
-    public function get(string $key)
+    public function get($items)
     {
-        return self::$values[$key] ?? null;
+        if (is_scalar($items)) {
+            return self::$values[$items] ?? null;
+        }
+
+        if (is_array($items)) {
+            return array_intersect_key(self::$values, array_flip($items));
+        }
+
+        throw new \InvalidArgumentException;
     }
 
     /**
      * @inheritdoc
      */
-    public function set(string $key, $value): void
+    public function set($items, $value = null): void
     {
-        self::$values[$key] = $value;
+        if (is_scalar($items) && !is_null($value)) {
+            $items = [$items => $value];
+        }
+
+        if (!is_array($items)) {
+            throw new \InvalidArgumentException;
+        }
+
+        self::$values = array_merge(self::$values, $items);
     }
 
     /**
@@ -37,11 +53,19 @@ class Once implements StorageInterface
      */
     public function lock(string $key): void
     {
-        if (in_array($key, self::$locks)) {
+        if ($this->isLocked($key)) {
             throw new ResourceNotAvailable;
         }
 
         self::$locks[] = $key;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isLocked(string $key): bool
+    {
+        return in_array($key, self::$locks);
     }
 
     /**

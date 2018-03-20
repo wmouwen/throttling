@@ -45,8 +45,12 @@ class LeakyBucket extends Throttler
         );
 
         if ($ratio > 1.0) {
+            $this->storage->free($this->getKey());
             throw new RequestThrottled(ceil(($ratio - 1.0) * $this->period));
         }
+
+        $this->setPreviousTime(microtime(true));
+        $this->setPreviousRatio($ratio);
 
         $this->storage->free($this->getKey());
     }
@@ -81,6 +85,14 @@ class LeakyBucket extends Throttler
     }
 
     /**
+     * @param float $time
+     */
+    protected function setPreviousTime(float $time): void
+    {
+        $this->storage->set($this->getPreviousTimeKey(), $time);
+    }
+
+    /**
      * @return string
      */
     protected function getPreviousRatioKey(): string
@@ -94,6 +106,14 @@ class LeakyBucket extends Throttler
     protected function getPreviousRatio(): float
     {
         return $this->storage->get($this->getPreviousRatioKey()) ?? 0.0;
+    }
+
+    /**
+     * @param float $ratio
+     */
+    protected function setPreviousRatio(float $ratio): void
+    {
+        $this->storage->set($this->getPreviousRatioKey(), $ratio);
     }
 
     /**
